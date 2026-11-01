@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blacksmith Dungeon Simulator - Roblox</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================
+           1. CSS DEĞİŞKENLERİ VE GENEL STİLLER
+           ========================================== */
+        :root {
+            --bg-primary: #0f0d0e;
+            --bg-secondary: #181518;
+            --bg-card: #221e22;
+            --accent-orange: #ff5722;
+            --accent-gold: #ffb300;
+            --accent-roblox: #00a2ff;
+            --accent-roblox-green: #00e676;
+            --text-light: #f5f5f5;
+            --text-muted: #a0a0a0;
+            --border-color: #332d33;
+            --font-title: 'Cinzel', serif;
+            --font-body: 'Poppins', sans-serif;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 179, 0, 0.3);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 50px auto;
+            font-size: 1.05rem;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        /* ==========================================
+           2. HEADER & NAVIGATION BAR
+           ========================================== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(15, 13, 14, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-title);
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            color: var(--accent-orange);
+            font-size: 1.6rem;
+            filter: drop-shadow(0 0 5px var(--accent-orange));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--accent-orange);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn-nav {
+            background: linear-gradient(135deg, var(--accent-orange), #d84315);
+            color: #fff !important;
+            padding: 10px 22px;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+        }
+
+        .btn-nav::after {
+            display: none !important;
+        }
+
+        .btn-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.6);
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        /* ==========================================
+           3. HERO SECTION
+           ========================================== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 80px;
+            background: linear-gradient(rgba(15, 13, 14, 0.75), rgba(15, 13, 14, 0.95)), 
+                        radial-gradient(circle at center, rgba(255, 87, 34, 0.15) 0%, transparent 70%);
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            filter: grayscale(40%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 850px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 179, 0, 0.15);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+    font-family: var(--font-title);
+    font-size: 3.8rem;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #ffffff 0%, #dcdcdc 50%, var(--accent-gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text; /* Eklenen standart özellik */
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+}
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-play {
+            background: linear-gradient(135deg, #00e676, #00a152);
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.4);
+        }
+
+        .btn-play:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 35px rgba(0, 230, 118, 0.7);
+            background: linear-gradient(135deg, #33eb91, #00e676);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        /* ==========================================
+           4. OYUN ÖZELLİKLERİ (FEATURES)
+           ========================================== */
+        .features {
+            background-color: var(--bg-secondary);
+            position: relative;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 35px 25px;
+            border-radius: 12px;
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 179, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 87, 34, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px auto;
+            color: var(--accent-orange);
+            font-size: 1.8rem;
+            border: 1px solid rgba(255, 87, 34, 0.2);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--accent-orange);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 87, 34, 0.5);
+        }
+
+        .feature-card h3 {
+            font-family: var(--font-title);
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: var(--text-light);
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* ==========================================
+           5. GÖRSEL GALERİSİ (GALLERY)
+           ========================================== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            aspect-ratio: 16 / 9;
+            background-color: var(--bg-card);
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-info h4 {
+            font-family: var(--font-title);
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+        }
+
+        .gallery-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================
+           6. TANITIM VİDEOSU (TRAILER)
+           ========================================== */
+        .trailer {
+            background-color: var(--bg-secondary);
+        }
+
+        .video-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ==========================================
+           7. FOOTER (ALT BİLGİ)
+           ========================================== */
+        footer {
+            background-color: #090809;
+            padding: 60px 0 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand h2 {
+            font-family: var(--font-title);
+            color: var(--accent-gold);
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .footer-brand p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background: var(--accent-orange);
+            color: #fff;
+            border-color: var(--accent-orange);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ==========================================
+           8. RESPONSIVE TASARIM (MOBİL UYUMLULUK)
+           ========================================== */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background-color: var(--bg-primary);
+                flex-direction: column;
+                justify-content: center;
+                transition: var(--transition);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HEADER / NAVIGATION BAR -->
+    <header>
+        <div class="container navbar">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-hammer"></i>
+                <span>Blacksmith Dungeon</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero">Ana Sayfa</a></li>
+                <li><a href="#features">Özellikler</a></li>
+                <li><a href="#gallery">Galeri</a></li>
+                <li><a href="#trailer">Tanıtım Videosu</a></li>
+                <li><a href="https://www.roblox.com" target="_blank" class="btn-nav">Oyna</a></li>
+            </ul>
+            <div class="mobile-toggle" id="mobileToggle">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. HERO SECTION -->
+    <section class="hero" id="hero">
+        <div class="container hero-content">
+            <span class="badge"><i class="fa-solid fa-fire"></i> Roblox'ta Yayında</span>
+            <h1>Kendi Silahlarını Örs,<br>Zindanlara Hükmet!</h1>
+            <p>Efsanevi madenleri topla, örsünün başında en güçlü kılıçları döv ve tehlikeli zindanların derinliklerindeki canavarlara meydan oku. Demircilik krallığını kurmaya hazır mısın?</p>
+            <div class="hero-buttons">
+                <!-- Roblox Oyun Linkinizi 'href' kısmına ekleyin -->
+                <a href="https://www.roblox.com" target="_blank" class="btn btn-play">
+                    <i class="fa-solid fa-play"></i> Roblox'ta Şimdi Oyna
+                </a>
+                <a href="#trailer" class="btn btn-secondary">
+                    <i class="fa-solid fa-circle-play"></i> Fragmanı İzle
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. OYUN ÖZELLİKLERİ (FEATURES) -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Oyun Özellikleri</h2>
+            <p class="section-subtitle">Blacksmith Dungeon Simulator dünyasında seni bekleyen benzersiz mekanikleri keşfet.</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-anvil"></i>
+                    </div>
+                    <h3>Örs ve Çekiçle Üretim</h3>
+                    <p>Farklı madenleri eriterek özel tariflerle eşsiz kılıçlar, balbalar ve zırhlar tasarla. Üretim kaliteni geliştir.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-dungeon"></i>
+                    </div>
+                    <h3>Zindan Keşfi</h3>
+                    <p>Kendi ürettiğin ekipmanlarla tehlikeli zindanlara gir, patron canavarları (boss) mağlup et ve ganimetleri topla.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <h3>Nadir Madenler</h3>
+                    <p>Haritanın gizli bölgelerinden mistik cevherler kaz. Efsanevi (Legendary) ve İlahi (Mythic) kalitede silahlar üret.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-shop"></i>
+                    </div>
+                    <h3>Dükkanını Geliştir</h3>
+                    <p>Kazandığın altınlarla demirhaneni büyüt, daha hızlı fırınlar al ve diğer oyunculara özel silahlar sat.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- 4. GÖRSEL GALERİSİ (GALLERY) -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <h2 class="section-title">Oyun İçi Görseller</h2>
+            <p class="section-subtitle">Zindanlardan ve demirhaneden heyecan verici kareler.</p>
+            
+            <div class="gallery-grid">
+                <!-- 1. Görsel -->
+                <div class="gallery-item">
+                    <img src="image/img1.jpg" alt="Demirhane ve Örs">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h4>Silahlar</h4>
+                            <p>Efsanevi silahların modellemeleri.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Görsel -->
+                <div class="gallery-item">
+                    <img src="image/img2.jpg" alt="Zindan Savaşı">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h4>Derin Zindanlar</h4>
+                            <p>Canavarlarla dolu zorlu zindan katları.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Görsel -->
+                <div class="gallery-item">
+                    <img src="image/img3.jpg" alt="Periler">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h4>Periler</h4>
+                            <p>Değerli petleri elde etmek için bosslarla savaşın.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. TANITIM VİDEOSU (TRAILER) -->
+    <section class="trailer" id="trailer">
+        <div class="container">
+            <h2 class="section-title">Tanıtım Videosu</h2>
+            <p class="section-subtitle">Oynanış fragmanını izleyin ve maceraya hazır olun!</p>
+            
+            <div class="video-wrapper">
+                <!-- Yerel klasördeki video.mp4 dosyasını kusursuz oynatan yapı -->
+                <video controls autoplay muted loop playsinline width="100%" height="100%" style="object-fit: cover; display: block;">
+                    <source src="image/video.mp4" type="video/mp4">
+                    Tarayıcınız video etiketini desteklemiyor.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FOOTER (ALT BİLGİ) -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h2>Blacksmith Dungeon Simulator</h2>
+                    <p>Roblox üzerindeki en dinamik demircilik ve zindan deneyimi.</p>
+                </div>
+                <div class="social-links">
+                    <!-- Kendi sosyal medya yönlendirmelerinizi ekleyin -->
+                    <a href="#" class="social-icon" title="Discord"><i class="fa-brands fa-discord"></i></a>
+                    <a href="#" class="social-icon" title="Roblox Grubu"><i class="fa-solid fa-gamepad"></i></a>
+                    <a href="#" class="social-icon" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="social-icon" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Blacksmith Dungeon Simulator. Tüm Hakları Saklıdır. Roblox platformuyla resmi bir bağı yoktur.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT KODLARI -->
+    <script>
+        // Mobil Menü Açma/Kapatma Mantığı
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Mobil Menüde Bir Linke Tıklanınca Menüyü Kapat
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                const icon = mobileToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // Header Arka Plan Stili (Scroll Esnasında Effect)
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(15, 13, 14, 0.95)';
+                header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+            } else {
+                header.style.background = 'rgba(15, 13, 14, 0.85)';
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
